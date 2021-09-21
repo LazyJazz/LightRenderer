@@ -1,6 +1,7 @@
 # LightRenderer
 Light Renderer by LazyJazz
 
+Suggest Build Environment: Visual Studio 2019 with Windows 10 SDK
 
 ## Gallery
 
