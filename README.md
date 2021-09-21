@@ -1,16 +1,17 @@
 # LightRenderer
+
 Light Renderer by LazyJazz
 
 Suggest Build Environment: Visual Studio 2019 with Windows 10 SDK
 
 ## Gallery
 
-![Texture](Light/gallery/Frostmourn1800spp.png)
+<img src="Light/gallery/Frostmourn1800spp.png" width="400px"></img>
 
-![MotionBlur](Light/gallery/J20-8000spp.png)
+<img src="Light/gallery/J20-8000spp.png" width="400px"></img>
 
-![MaterialPaper](Light/gallery/Lanterns-20000spp.png)
+<img src="Light/gallery/Lanterns-20000spp.png" width="400px"></img>
 
-![Demo1](Light/gallery/WaterSmooth-14000spp.png)
+<img src="Light/gallery/WaterSmooth-14000spp.png" width="400px"></img>
 
-![Demo2](Light/gallery/lucy-darker-7200spp.png)
+<img src="Light/gallery/lucy-darker-7200spp.png" width="400px"></img>
