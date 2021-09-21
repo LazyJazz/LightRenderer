@@ -168,7 +168,7 @@ void LRenderPathTracing::StartRender(int nThread)
 		SPP += sample_per_round;
 		pFilm->GetImage(&img);
 		TCHAR filename[128];
-		swprintf_s(filename, L"%ws-%dspp.tiff", project_name.c_str(), SPP);
+		swprintf_s(filename, L"%ws-%dspp.png", project_name.c_str(), SPP);
 		img.SaveToFileFloat(filename);
 		printf("%d SPP Done...%d s used\n", SPP, clock() / CLOCKS_PER_SEC);
 	}
