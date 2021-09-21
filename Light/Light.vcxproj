@@ -166,7 +166,7 @@
     <ClInclude Include="LightLowDiscrepancySequence.h" />
     <ClInclude Include="LightMesh.h" />
     <ClInclude Include="LightTracingGuide.h" />
-    <ClInclude Include="LightCamara.h" />
+    <ClInclude Include="LightCamera.h" />
     <ClInclude Include="LightFilm.h" />
     <ClInclude Include="LightMaterial.h" />
     <ClInclude Include="LightMath.h" />
@@ -182,7 +182,7 @@
     <ClCompile Include="LibZJRandom.cpp" />
     <ClCompile Include="LibZJTimer.cpp" />
     <ClCompile Include="LightBezier.cpp" />
-    <ClCompile Include="LightCamara.cpp" />
+    <ClCompile Include="LightCamera.cpp" />
     <ClCompile Include="LightFilm.cpp" />
     <ClCompile Include="LightLowDiscrepancySequence.cpp" />
     <ClCompile Include="LightMaterial.cpp" />

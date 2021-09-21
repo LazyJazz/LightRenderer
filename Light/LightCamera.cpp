@@ -1,6 +1,6 @@
-#include "LightCamara.h"
+#include "LightCamera.h"
 
-LCamaraFlat::LCamaraFlat()
+LCameraFlat::LCameraFlat()
 {
 	coord = LCoordinate();
 	film_width = 0;
@@ -9,7 +9,7 @@ LCamaraFlat::LCamaraFlat()
 	view_height = 0.0;
 }
 
-LRay LCamaraFlat::GenerateRay(UINT x, UINT y, double time, RandomDevice& rd)
+LRay LCameraFlat::GenerateRay(UINT x, UINT y, double time, RandomDevice& rd)
 {
 	double xu = view_width * (1.0 / film_width);
 	double yu = view_height * (1.0 / film_height);
@@ -25,24 +25,24 @@ LRay LCamaraFlat::GenerateRay(UINT x, UINT y, double time, RandomDevice& rd)
 	)) - coord.o);
 }
 
-void LCamaraFlat::SetCoordinate(LCoordinate Coordinate)
+void LCameraFlat::SetCoordinate(LCoordinate Coordinate)
 {
 	coord = Coordinate;
 }
 
-void LCamaraFlat::SetFilmSize(UINT Width, UINT Height)
+void LCameraFlat::SetFilmSize(UINT Width, UINT Height)
 {
 	film_width = Width;
 	film_height = Height;
 }
 
-void LCamaraFlat::SetViewSize(double Width, double Height)
+void LCameraFlat::SetViewSize(double Width, double Height)
 {
 	view_width = Width;
 	view_height = Height;
 }
 
-LRay LCamaraAperture::GenerateRay(UINT x, UINT y, double time, RandomDevice& rd)
+LRay LCameraAperture::GenerateRay(UINT x, UINT y, double time, RandomDevice& rd)
 {
 	double xu = view_width * (1.0 / film_width);
 	double yu = view_height * (1.0 / film_height);
@@ -65,12 +65,12 @@ LRay LCamaraAperture::GenerateRay(UINT x, UINT y, double time, RandomDevice& rd)
 	)* focal_length) - o);
 }
 
-void LCamaraAperture::SetAperture(double aperture)
+void LCameraAperture::SetAperture(double aperture)
 {
 	this->aperture = aperture;
 }
 
-void LCamaraAperture::SetFocalLength(double focal_length)
+void LCameraAperture::SetFocalLength(double focal_length)
 {
 	this->focal_length = focal_length;
 }

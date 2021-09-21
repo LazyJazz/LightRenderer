@@ -42,7 +42,7 @@
     <ClInclude Include="LightGeometry.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="LightCamara.h">
+    <ClInclude Include="LightCamera.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="LibZJRandom.h">
@@ -98,7 +98,7 @@
     <ClCompile Include="LightGeometry.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="LightCamara.cpp">
+    <ClCompile Include="LightCamera.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="LibZJRandom.cpp">

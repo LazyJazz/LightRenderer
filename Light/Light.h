@@ -1,7 +1,7 @@
 #pragma once
 #include"LightMath.h"
 #include"LightGeometry.h"
-#include"LightCamara.h"
+#include"LightCamera.h"
 #include"LightRender.h"
 #include"LightTracingGuide.h"
 #include"LightMesh.h"

@@ -2,7 +2,7 @@
 
 LRenderPathTracing::LRenderPathTracing()
 {
-	pCamara = NULL;
+	pCamera = NULL;
 	pFilm = NULL;
 	pModel = NULL;
 	hMutex = NULL;
@@ -84,7 +84,7 @@ DWORD __stdcall LRenderPathTracing::RenderThread(LPVOID pReserved)
 		{
 			double time = sqrt(randdevice.rand_double());
 			LRay first_ray;
-			first_ray = pThis->pCamara->GenerateRay(render_mission.x, render_mission.y, time, randdevice);
+			first_ray = pThis->pCamera->GenerateRay(render_mission.x, render_mission.y, time, randdevice);
 			LColor resColor;
 			double resScale;
 			pThis->PathTracingCore(first_ray, time, randdevice, &resColor, &resScale, 0, pThis->ppIndexSeq[render_mission.y * pThis->pFilm->width + render_mission.x]);
@@ -105,7 +105,7 @@ void LRenderPathTracing::StartRender(int nThread)
 	ShowWindow(GetHWnd(), SW_SHOW);
 	hMutex = CreateMutex(NULL, FALSE, L"PathTracingRenderer");
 	if (!hMutex)return;
-	static_cast<LCamaraFlat*>(pCamara)->SetFilmSize(pFilm->width, pFilm->height);
+	static_cast<LCameraFlat*>(pCamera)->SetFilmSize(pFilm->width, pFilm->height);
 	vector<RenderMission> vecMission;
 	//vecMission.resize((size_t)pFilm->width * pFilm->height);
 	ppIndexSeq = new unsigned* [(size_t)pFilm->width * pFilm->height];

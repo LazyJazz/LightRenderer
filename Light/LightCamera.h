@@ -1,26 +1,26 @@
 #pragma once
 #include"LightGeometry.h"
 
-class LCamara
+class LCamera
 {
 public:
 	virtual LRay GenerateRay(UINT x, UINT y, double time, RandomDevice& rd) = 0;
 };
 
-class LCamaraFlat:public LCamara
+class LCameraFlat:public LCamera
 {
 public:
 	LCoordinate coord;
 	UINT film_width, film_height;
 	double view_width, view_height;
-	LCamaraFlat();
+	LCameraFlat();
 	virtual LRay GenerateRay(UINT x, UINT y, double time, RandomDevice& rd);
 	void SetCoordinate(LCoordinate Coordinate);
 	void SetFilmSize(UINT Width, UINT Height);
 	void SetViewSize(double Width, double Height);
 };
 
-class LCamaraAperture :public LCamaraFlat
+class LCameraAperture :public LCameraFlat
 {
 public:
 	double aperture = 0.0;

@@ -1,6 +1,6 @@
 #pragma once
 #include"LightModel.h"
-#include"LightCamara.h"
+#include"LightCamera.h"
 #include"LightFilm.h"
 #include"LightMaterial.h"
 #include<vector>
@@ -19,7 +19,7 @@ class LRender
 {
 public:
 	LModel* pModel = NULL;
-	LCamara* pCamara = NULL;
+	LCamera* pCamera = NULL;
 	LFilm* pFilm = NULL;
 	//virtual void StartRender(int nThread) = 0;
 };
