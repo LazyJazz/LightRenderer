@@ -29,8 +29,14 @@ LColor LColor::operator*(const double& scale) const
 
 D2D1_COLOR_F LColor::GetColor() const
 {
-	double scale = 1.0 / max(1.0, max(r, max(g, b)));
-	return D2D1::ColorF(r * scale, g * scale, b * scale);
+	/*double scale = 1.0 / max(1.0, max(r, max(g, b)));
+	return D2D1::ColorF(r * scale, g * scale, b * scale);//*/
+	return D2D1::ColorF(min(r, 1.0), min(g, 1.0), min(b, 1.0));
+}
+
+D2D1_COLOR_F LColor::GetColorFloat() const
+{
+	return D2D1::ColorF(min(r, 1000.0), min(g, 1000.0), min(b, 1000.0));
 }
 
 LFilm::LFilm()
@@ -75,13 +81,17 @@ void LFilm::SetColor(UINT x, UINT y, LColor color, double scale)
 
 void LFilm::GetImage(Image* img)
 {
-	if (width != img->GetWidth() || height != img->GetHeight())img->Resize(width, height);
-	img->Lock();
+	if (width != img->GetWidth() || height != img->GetHeight())img->ResizeFloat(width, height);
+	img->LockFloat();
 	for(UINT x=0;x<width;x++)
 		for (UINT y = 0; y < height; y++)
 		{
-			LColor color = pColor[y * width + x] * (1.0 / pScale[y * width + x]);
-			img->PutPixel(x, y, color.GetColor());
+			if (pScale[y * width + x] < L_EPS)img->PutPixelFloat(x, y, D2D1::ColorF(0.0, 0.0, 0.0));
+			else
+			{
+				LColor color = pColor[y * width + x] * (1.0 / pScale[y * width + x]);
+				img->PutPixelFloat(x, y, color.GetColorFloat());
+			}
 		}
 	img->Unlock();
 }

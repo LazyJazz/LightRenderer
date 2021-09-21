@@ -83,7 +83,25 @@ void LMesh::LoadObjFile(const char* filename, size_t no)
 				//ss >> index[0] >> index[1] >> index[2];
 				ss >> index_first;
 				while (ss >> index)index_vec.push_back(index);
-				for (size_t i = 1; i < index_vec.size(); i++)vecMeshFace[cFace++] = LMeshFace(index_first, index_vec[i - 1], index_vec[i]);
+				for (size_t i = 1; i < index_vec.size(); i++)
+				{
+					vecMeshFace[cFace] = LMeshFace(index_first, index_vec[i - 1], index_vec[i]);
+					for (size_t j = 0; j < 3; j++)
+					{
+						int v;
+						v = vecMeshFace[cFace].index_vertex[j];
+
+						if (v < 0)v = cVertex + v;
+						vecMeshFace[cFace].index_vertex[j] = v;
+						v = vecMeshFace[cFace].index_normal[j];
+						if (v < 0)v = cNormal + v;
+						vecMeshFace[cFace].index_normal[j] = v;
+						v = vecMeshFace[cFace].index_texture[j];
+						if (v < 0)v = cTexture + v;
+						vecMeshFace[cFace].index_texture[j] = v;
+					}
+					cFace++;
+				}
 			}
 			else if (type == "g")present_no++;
 		}
@@ -144,7 +162,10 @@ void LMesh::Rotate(double rx, double ry, double rz)
 {
 	bounding_box = LBoundingBox();
 	for (size_t i = 1; i <= uVertexCnt; i++)
-		vecMeshVertex[i] = vecMeshVertex[i].rotate(rx, ry, rz), bounding_box.Update(vecMeshVertex[i]);
+		vecMeshVertex[i] = vecMeshVertex[i].rotate(rx, ry, rz),
+		bounding_box.Update(vecMeshVertex[i]);
+	for (size_t i = 1; i <= uNormalCnt; i++)
+		vecMeshNormal[i] = vecMeshNormal[i].rotate(rx, ry, rz);
 }
 
 void LMesh::Zoom(double scale)
@@ -251,7 +272,7 @@ void LMesh::GetIntersection(size_t x, const LRay& iray, LIntersectionPack* pResu
 			{
 				n[i] = vecMeshNormal[vecMeshFace[x].index_normal[i]];
 				if (n[i].iszero())n[i] = vecMeshFace[x].triangle.pl.n;
-				if (n[i] * iray.v > 0.0)n[i] = -n[i];
+				//if (n[i] * iray.v > 0.0)n[i] = -n[i];
 			}
 			scalev = vecMeshFace[x].triangle.ScaleVec(inter);
 			normal = n[0] * scalev.x + n[1] * scalev.y + n[2] * scalev.z;
@@ -411,36 +432,7 @@ void LModelMesh::GetMedium(LRay iray, double time, LMedium** pMedium) const
 	else *pMedium = NULL;
 }
 
-LModelTransform::LModelTransform()
+LBoundingBox LModelMesh::GetBoundingBox() const
 {
-	coordinate = LCoordinate();
-	model = NULL;
-}
-
-LModelTransform::LModelTransform(LCoordinate cdn, LModel* pModel)
-{
-	coordinate = cdn;
-	model = pModel;
-}
-
-bool LModelTransform::GetIntersection(LRay iray, double time, LSurfaceInfo* pSurfaceInfo) const
-{
-	//LRay tray = LRay(coordinate.PutIn(iray.o), coordinate.PutIn(iray.o + iray.v) - coordinate.PutIn(iray.o));
-	bool res = model->GetIntersection(coordinate.PutIn(iray), time, pSurfaceInfo);
-	if (res)
-	{
-		pSurfaceInfo->normal = coordinate.GetOut(pSurfaceInfo->intersection + pSurfaceInfo->normal);
-		pSurfaceInfo->model_normal = coordinate.GetOut(pSurfaceInfo->intersection + pSurfaceInfo->model_normal);
-		pSurfaceInfo->intersection = coordinate.GetOut(pSurfaceInfo->intersection);
-		pSurfaceInfo->normal -= pSurfaceInfo->intersection; pSurfaceInfo->normal = pSurfaceInfo->normal.zoom(1.0);
-		pSurfaceInfo->model_normal -= pSurfaceInfo->intersection; pSurfaceInfo->model_normal = pSurfaceInfo->model_normal.zoom(1.0);
-		pSurfaceInfo->distance = (pSurfaceInfo->intersection - iray.o).mod();
-		pSurfaceInfo->ray = coordinate.GetOut(pSurfaceInfo->ray);
-	}
-	return res;
-}
-
-void LModelTransform::GetMedium(LRay iray, double time, LMedium** pMedium) const
-{
-	model->GetMedium(coordinate.PutIn(iray), time, pMedium);
+	return mesh->bounding_box;
 }

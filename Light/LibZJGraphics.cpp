@@ -20,8 +20,7 @@ void CreateRT();//CreateRenderTarget
 void OnDestroy();
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	
+{	
 	switch (uMsg)
 	{
 	case WM_CREATE:
@@ -171,7 +170,9 @@ void SetFrameImage(Image * pimg)
 {
 	static TCHAR title[128];
 	static FPSCounter fc;
-	wsprintf(title, L"Hello,World! FPS:%d", fc.FPS());
+	RECT rect;
+	GetClientRect(g_hwnd, &rect);
+	wsprintf(title, L"Client width: %d height: %d FPS:%d", rect.right - rect.left, rect.bottom - rect.top, fc.FPS());
 	SetWindowText(GetHWnd(), title);
 	CreateRT();
 	pimg->MakeD2DBitmap(&g_pBitmap);
@@ -287,6 +288,15 @@ void Image::Resize(UINT width, UINT height)
 	this->height = height;
 }
 
+void Image::ResizeFloat(UINT width, UINT height)
+{
+	Release();
+	g_pImgFactory->CreateBitmap(width, height, GUID_WICPixelFormat128bppPRGBAFloat, WICBitmapCacheOnDemand, &pBitmap);
+	if (g_pFactory)g_pFactory->CreateWicBitmapRenderTarget(pBitmap, D2D1::RenderTargetProperties(), &pRenderTarget);
+	this->width = width;
+	this->height = height;
+}
+
 void Image::Lock()
 {
 	WICRect wicrect;
@@ -301,6 +311,23 @@ void Image::Lock()
 		WICInProcPointer WIPP;
 		pBitmapLock->GetDataPointer(&size, &WIPP);
 		pBuffer = (DWORD*)WIPP;
+	}
+}
+
+void Image::LockFloat()
+{
+	WICRect wicrect;
+	wicrect.X = 0;
+	wicrect.Y = 0;
+	wicrect.Width = width;
+	wicrect.Height = height;
+	pBitmap->Lock(&wicrect, WICBitmapLockWrite, &pBitmapLock);
+	if (pBitmapLock)
+	{
+		UINT size;
+		WICInProcPointer WIPP;
+		pBitmapLock->GetDataPointer(&size, &WIPP);
+		pBufferFloat = (FLOAT*)WIPP;
 	}
 }
 
@@ -320,6 +347,7 @@ void Image::Unlock()
 {
 	SafeRelease(&pBitmapLock);
 	pBuffer = NULL;
+	pBufferFloat = NULL;
 }
 
 void Image::BeginDraw()
@@ -478,6 +506,65 @@ HRESULT Image::SaveToFile(PCWSTR uri)
 	return hr;
 }
 
+HRESULT Image::SaveToFileFloat(PCWSTR uri)
+{
+	IWICStream* pStream = NULL;
+	IWICBitmapEncoder* pEncoder = NULL;
+	IWICBitmapFrameEncode* pFEncoder = NULL;
+	HRESULT hr;
+	hr = g_pImgFactory->CreateStream(&pStream);
+	if (SUCCEEDED(hr))
+	{
+		hr = pStream->InitializeFromFilename(uri, GENERIC_WRITE);
+	}
+	if (SUCCEEDED(hr))
+	{
+		hr = g_pImgFactory->CreateEncoder(GUID_ContainerFormatTiff, NULL, &pEncoder);
+	}
+	if (SUCCEEDED(hr))
+	{
+		hr = pEncoder->Initialize(pStream, WICBitmapEncoderNoCache);
+	}
+	if (SUCCEEDED(hr))
+	{
+		hr = pEncoder->CreateNewFrame(&pFEncoder, nullptr);
+	}
+	if (SUCCEEDED(hr))
+	{
+		hr = pFEncoder->Initialize(nullptr);
+	}
+	UINT width, height;
+	if (SUCCEEDED(hr))
+	{
+		hr = pBitmap->GetSize(&width, &height);
+	}
+	if (SUCCEEDED(hr))
+	{
+		hr = pFEncoder->SetSize(width, height);
+	}
+	WICPixelFormatGUID format = GUID_WICPixelFormat64bppPRGBAHalf;
+	if (SUCCEEDED(hr))
+	{
+		hr = pFEncoder->SetPixelFormat(&format);
+	}
+	if (SUCCEEDED(hr))
+	{
+		hr = pFEncoder->WriteSource(pBitmap, nullptr);
+	}
+	if (SUCCEEDED(hr))
+	{
+		hr = pFEncoder->Commit();
+	}
+	if (SUCCEEDED(hr))
+	{
+		hr = pEncoder->Commit();
+	}
+	SafeRelease(&pFEncoder);
+	SafeRelease(&pEncoder);
+	SafeRelease(&pStream);
+	return hr;
+}
+
 HRESULT Image::MakeD2DBitmap(ID2D1Bitmap ** ppD2DBitmap)
 {
 	if (g_pRenderTarget)
@@ -527,6 +614,15 @@ void Image::PutPixel(int x, int y, float R, float G, float B, float A)
 {
 	int a = 255 * A, r = 255 * R*A, g = 255 * G*A, b = 255 * B*A;
 	return PutPixel(x, y, (a << 24) | (r << 16) | (g << 8) | b);
+}
+
+void Image::PutPixelFloat(int x, int y, D2D1_COLOR_F color)
+{
+	int index = (y * width + x) * 4;
+	pBufferFloat[index] = color.r;
+	pBufferFloat[index+1] = color.g;
+	pBufferFloat[index+2] = color.b;
+	pBufferFloat[index+3] = color.a;
 }
 
 DWORD Image::GetPixel(int x, int y) const

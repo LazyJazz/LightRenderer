@@ -67,17 +67,7 @@ public:
 	LModelMesh(LMesh* pMesh, LMaterial* pMaterial);
 	bool GetIntersection(LRay iray, double time, LSurfaceInfo* pSurfaceInfo) const;
 	void GetMedium(LRay iray, double time, LMedium** pMedium) const;
-};
-
-class LModelTransform :public LModel
-{
-public:
-	LCoordinate coordinate;
-	LModel* model;
-	LModelTransform();
-	LModelTransform(LCoordinate cdn, LModel* pModel);
-	bool GetIntersection(LRay iray, double time, LSurfaceInfo* pSurfaceInfo) const;
-	void GetMedium(LRay iray, double time, LMedium** pMedium) const;
+	virtual LBoundingBox GetBoundingBox() const;
 };
 
 UINT GetIntersectionCounter();

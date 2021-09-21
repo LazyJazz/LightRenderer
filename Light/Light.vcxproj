@@ -94,6 +94,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -107,6 +110,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -124,6 +130,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -141,6 +150,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="LibZJ.h" />
@@ -150,6 +162,7 @@
     <ClInclude Include="LibZJShared.h" />
     <ClInclude Include="LibZJTimer.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LightBezier.h" />
     <ClInclude Include="LightLowDiscrepancySequence.h" />
     <ClInclude Include="LightMesh.h" />
     <ClInclude Include="LightTracingGuide.h" />
@@ -168,6 +181,7 @@
     <ClCompile Include="LibZJGraphics.cpp" />
     <ClCompile Include="LibZJRandom.cpp" />
     <ClCompile Include="LibZJTimer.cpp" />
+    <ClCompile Include="LightBezier.cpp" />
     <ClCompile Include="LightCamara.cpp" />
     <ClCompile Include="LightFilm.cpp" />
     <ClCompile Include="LightLowDiscrepancySequence.cpp" />

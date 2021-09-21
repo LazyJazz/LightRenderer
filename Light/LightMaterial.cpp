@@ -103,7 +103,7 @@ void InteractionSpecular(const LSurfaceInfo& surface, LVec real_normal, LRay* or
 	oray->v = surface.ray.v + real_normal * ((surface.ray.v * real_normal) * -2);
 }
 
-void InteractionRefraction(const LSurfaceInfo& surface, LVec real_normal, LRay* oray, LColor* pFilter, RandomDevice& randdevice)
+void InteractionRefraction(const LSurfaceInfo& surface, LVec real_normal, LRay* oray, LColor* pFilter, RandomDevice& randdevice, UINT Floor)
 {
 	LRay ray;
 	double ri0, ri1;
@@ -122,6 +122,18 @@ void InteractionRefraction(const LSurfaceInfo& surface, LVec real_normal, LRay* 
 	double i0 = asin(sin0), i1;
 	double ref_possib;
 	*pFilter = LColor(1.0, 1.0, 1.0);
+	/*if (!Floor)
+	{
+		printf("%lf %.100lf\n", ri1, surface.intersection.z);
+		real_normal.Print(); puts("");
+		if (ri1 == 1.0)
+		{
+			printf("%lf %.100lf\n", ri1, surface.intersection.z);
+			printf("Intersection:"); surface.intersection.Print(); puts("");
+			printf("Normal:"); surface.normal.Print(); puts("");
+			printf("Model Normal:"); surface.model_normal.Print(); puts("");
+		}
+	}//*/
 	if (sin1 > 1.0)
 	{
 		ref_possib = 1.0;
@@ -140,7 +152,6 @@ void InteractionRefraction(const LSurfaceInfo& surface, LVec real_normal, LRay* 
 	else
 	{
 		double cos1 = cos(i1), tan1 = sin1 / cos1;
-		*pFilter = *pFilter * (cos(i0) / cos1);
 		oray->v = -real_normal * cos1 + (mid - surface.ray.o).zoom(sin1);
 	}
 }
@@ -260,7 +271,7 @@ void LMaterialMixture::Interaction(const LSurfaceInfo& surface, LRay* oray, doub
 void LMaterialRefractionSurface::Interaction(const LSurfaceInfo& surface, LRay* oray, double* Scale, LColor* pFilter, RandomDevice& randdevice, unsigned** ppIndexSeq, void* pReserved, UINT Floor) const
 {
 	//InteractionSpecular(surface, surface.normal, oray);
-	InteractionRefraction(surface, surface.normal, oray, pFilter, randdevice);
+	InteractionRefraction(surface, surface.normal, oray, pFilter, randdevice, Floor);
 	*Scale = 1.0;
 	*pFilter = *pFilter * GetColor(surface);
 }
@@ -313,4 +324,74 @@ void LMaterialGlossySurface::Interaction(const LSurfaceInfo& surface, LRay* oray
 	if (oray->v * surface.model_normal < 0.0)
 		* pFilter = LColor();
 	else *pFilter = color;
+}
+
+void LMaterialDisneyDiffuse::Interaction(const LSurfaceInfo& surface, LRay outray, double* Scale, LColor* pFilter, RandomDevice& randdevice) const
+{
+	*pFilter = color;
+	*pFilter = *pFilter * (surface.normal * outray.v);
+
+	double oneMinusCosL = 1.0 - abs(surface.ray.v.z);
+	double oneMinusCosLSqr = oneMinusCosL * oneMinusCosL;
+	double oneMinusCosV = 1.0 - abs(outray.v.z);
+	double oneMinusCosVSqr = oneMinusCosV * oneMinusCosV;
+
+	// Roughness是粗糙度，IDotH的意思会在下一篇讲Microfacet模型时提到
+	LVec normal = -surface.ray.v + outray.v;
+	if (normal.iszero())normal = surface.normal;
+	else normal = normal.zoom(1.0);
+	double IDotH = -surface.ray.v * normal;
+	//if(IDotH)
+	double F_D90 = 0.5 + 2.0 * IDotH * IDotH * Roughness;
+
+	*Scale = (1.0 + (F_D90 - 1.0) * oneMinusCosLSqr * oneMinusCosLSqr * oneMinusCosL) *
+		(1.0 + (F_D90 - 1.0) * oneMinusCosVSqr * oneMinusCosVSqr * oneMinusCosV);
+}
+
+void LMaterialDisneyDiffuse::SetColor(LColor color)
+{
+	this->color = color;
+}
+
+void LMaterialDisneyDiffuse::SetRoughness(double Roughness)
+{
+	this->Roughness = Roughness;
+}
+
+void LMaterialPaper::Interaction(const LSurfaceInfo& surface, LRay* oray, double* Scale, LColor* pFilter, RandomDevice& randdevice, unsigned** ppIndexSeq, void* pReserved, UINT Floor) const
+{
+	oray->o = surface.intersection;
+	if (*ppIndexSeq)
+	{
+		do
+		{
+			oray->v = RandOnSphere((*ppIndexSeq)[Floor]);
+		} while (oray->v * surface.normal == 0.0);
+		(*ppIndexSeq) = 0;
+	}
+	else
+	{
+		do
+		{
+			oray->v = RandOnSphere(randdevice);
+		} while (oray->v * surface.normal == 0.0);
+	}
+	*Scale = 1.0;
+	if(oray->v * surface.normal>0.0)*pFilter = color * abs(oray->v * surface.normal);
+	else
+	{
+		double p = acos(surface.ray.v * oray->v)*2;
+		*pFilter = color * abs(oray->v * surface.normal) * LColor(pow(color.r, p), pow(color.g, p), pow(color.b, p));
+	}
+}
+
+void LMaterialPaper::SetColor(LColor color)
+{
+	this->color = color;
+}
+
+void LMaterialCombine::Interaction(const LSurfaceInfo& surface, LRay* oray, double* Scale, LColor* pFilter, RandomDevice& randdevice, unsigned** ppIndexSeq, void* pReserved, UINT Floor) const
+{
+	if (randdevice.rand_double() < scale)mat[0]->Interaction(surface, oray, Scale, pFilter, randdevice, ppIndexSeq, pReserved, Floor);
+	else mat[1]->Interaction(surface, oray, Scale, pFilter, randdevice, ppIndexSeq, pReserved, Floor);
 }

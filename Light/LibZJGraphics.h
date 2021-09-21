@@ -24,13 +24,16 @@ private:
 	IWICBitmapLock			*pBitmapLock;
 	ID2D1RenderTarget		*pRenderTarget;
 	DWORD * pBuffer;
+	FLOAT * pBufferFloat;
 	UINT width, height;
 public:
-	Image() :pBitmap(NULL), pBitmapLock(NULL), pRenderTarget(NULL), pBuffer(NULL) { width = height = 0; }
+	Image() :pBitmap(NULL), pBitmapLock(NULL), pRenderTarget(NULL), pBuffer(NULL),pBufferFloat(NULL) { width = height = 0; };
 	~Image();
 	void Release();
 	void Resize(UINT width, UINT height);
+	void ResizeFloat(UINT width, UINT height);
 	void Lock();
+	void LockFloat();
 	DWORD * GetBuffer();
 	void Unlock();
 	void BeginDraw();
@@ -41,11 +44,13 @@ public:
 	void Clear(D2D1_COLOR_F color = D2D1::ColorF(D2D1::ColorF::Black));
 	HRESULT LoadFromFile(PCWSTR uri);
 	HRESULT SaveToFile(PCWSTR uri);
+	HRESULT SaveToFileFloat(PCWSTR uri);
 	HRESULT MakeD2DBitmap(ID2D1Bitmap **ppD2DBitmap);
 	void PutPixel(int x, int y, UINT R, UINT G, UINT B, UINT A = 255);
 	void PutPixel(int x, int y, DWORD Color);
 	void PutPixel(int x, int y, D2D1_COLOR_F color);
 	void PutPixel(int x, int y, float r, float g, float b, float a = 1.0);
+	void PutPixelFloat(int x, int y, D2D1_COLOR_F color);
 	DWORD GetPixel(int x, int y) const;
 	bool illegal(int x, int y) const;
 	UINT GetWidth() const;

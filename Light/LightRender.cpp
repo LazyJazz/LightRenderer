@@ -107,7 +107,7 @@ void LRenderPathTracing::StartRender(int nThread)
 	if (!hMutex)return;
 	static_cast<LCamaraFlat*>(pCamara)->SetFilmSize(pFilm->width, pFilm->height);
 	vector<RenderMission> vecMission;
-	vecMission.resize((size_t)pFilm->width * pFilm->height);
+	//vecMission.resize((size_t)pFilm->width * pFilm->height);
 	ppIndexSeq = new unsigned* [(size_t)pFilm->width * pFilm->height];
 	RandomDevice rnddev;
 	for (size_t i = 0; i < (size_t)pFilm->width * pFilm->height; i++)
@@ -120,12 +120,14 @@ void LRenderPathTracing::StartRender(int nThread)
 	}
 	for (UINT x = 0; x < pFilm->width; x++)
 		for (UINT y = 0; y < pFilm->height; y++)
+	//for (UINT x = 56; x < 61; x++)
+	//	for (UINT y = 65; y < 71; y++)
 		{
 			RenderMission render_mission;
 			render_mission.x = x;
 			render_mission.y = y;
 			render_mission.times = sample_per_round;
-			vecMission[(size_t)y * pFilm->width + x] = render_mission;
+			vecMission.push_back(render_mission);
 		}
 	MissionSequence.push(RenderMission());
 	for (int id = 0; id < nThread; id++)
@@ -144,7 +146,7 @@ void LRenderPathTracing::StartRender(int nThread)
 		while (true)
 		{
 			WaitForSingleObject(hMutex, INFINITE);
-			if (nResult == pFilm->width * pFilm->height)break;
+			if (nResult == vecMission.size())break;
 			while (!ResultSequence.empty())
 			{
 				RenderMission rm = ResultSequence.front(); ResultSequence.pop();
@@ -166,8 +168,8 @@ void LRenderPathTracing::StartRender(int nThread)
 		SPP += sample_per_round;
 		pFilm->GetImage(&img);
 		TCHAR filename[128];
-		swprintf_s(filename, L"%ws-%dspp.png", project_name.c_str(), SPP);
-		img.SaveToFile(filename);
+		swprintf_s(filename, L"%ws-%dspp.tiff", project_name.c_str(), SPP);
+		img.SaveToFileFloat(filename);
 		printf("%d SPP Done...%d s used\n", SPP, clock() / CLOCKS_PER_SEC);
 	}
 	WaitForSingleObject(hMutex, INFINITE);

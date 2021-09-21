@@ -97,9 +97,9 @@ bool LBoundingBox::islegal() const
 
 bool LBoundingBox::isInside(LVec vec) const
 {
-	return v0.x <= vec.x && vec.x <= v1.x
-		&& v0.y <= vec.y && vec.y <= v1.y
-		&& v0.z <= vec.z && vec.z <= v1.z;
+	return v0.x - L_EPS <= vec.x && vec.x <= v1.x + L_EPS
+		&& v0.y - L_EPS <= vec.y && vec.y <= v1.y + L_EPS
+		&& v0.z - L_EPS <= vec.z && vec.z <= v1.z + L_EPS;
 }
 
 void LBoundingBox::Update(LVec vec)

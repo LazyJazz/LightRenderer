@@ -36,6 +36,16 @@ public:
 	virtual void Interaction(const LSurfaceInfo& surface, LRay outray, double* Scale, LColor* pFilter, RandomDevice& randdevice) const = 0;
 };
 
+class LMaterialDisneyDiffuse :public LMaterialReflectAny
+{
+public:
+	LColor color;
+	double Roughness = 0.0;
+	void Interaction(const LSurfaceInfo& surface, LRay outray, double* Scale, LColor* pFilter, RandomDevice& randdevice) const;
+	void SetColor(LColor color);
+	void SetRoughness(double Roughness);
+};
+
 class LMaterialLambertian :public LMaterialReflectAny
 {
 public:
@@ -155,10 +165,25 @@ public:
 	void Interaction(const LSurfaceInfo& surface, LRay* oray, double* Scale, LColor* pFilter, RandomDevice& randdevice, unsigned** ppIndexSeq, void* pReserved, UINT Floor) const;
 };
 
+class LMaterialPaper :public LMaterial
+{
+public:
+	LColor color;
+	void Interaction(const LSurfaceInfo& surface, LRay* oray, double* Scale, LColor* pFilter, RandomDevice& randdevice, unsigned** ppIndexSeq, void* pReserved, UINT Floor) const;
+	void SetColor(LColor color);
+};
+
+class LMaterialCombine :public LMaterial
+{
+public:
+	LMaterial* mat[2];
+	double scale;
+	void Interaction(const LSurfaceInfo& surface, LRay* oray, double* Scale, LColor* pFilter, RandomDevice& randdevice, unsigned** ppIndexSeq, void* pReserved, UINT Floor) const;
+};
 
 void InteractionSpecular(const LSurfaceInfo& surface, LVec real_normal, LRay* oray);
 
-void InteractionRefraction(const LSurfaceInfo& surface, LVec real_normal, LRay* oray,LColor *pFilter, RandomDevice& randdevice);
+void InteractionRefraction(const LSurfaceInfo& surface, LVec real_normal, LRay* oray, LColor* pFilter, RandomDevice& randdevice, UINT Floor);
 
 void InteractionReflectAny(const LSurfaceInfo& surface, LRay* oray, RandomDevice& randdevice, unsigned** ppIndexSeq, UINT Floor);
 

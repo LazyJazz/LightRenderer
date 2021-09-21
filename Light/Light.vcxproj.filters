@@ -72,6 +72,9 @@
     <ClInclude Include="LightMedium.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="LightBezier.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LibZJFPSCounter.cpp">
@@ -123,6 +126,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="LightMedium.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LightBezier.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

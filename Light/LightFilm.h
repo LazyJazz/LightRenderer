@@ -10,6 +10,7 @@ public:
 	LColor operator * (const LColor& color) const;
 	LColor operator * (const double& scale) const;
 	D2D1_COLOR_F GetColor() const;
+	D2D1_COLOR_F GetColorFloat() const;
 };
 
 class LFilm
