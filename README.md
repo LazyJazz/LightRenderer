@@ -6,8 +6,6 @@ Suggest Build Environment: Visual Studio 2019 with Windows 10 SDK
 
 ## Gallery
 
-<img src="Light/gallery/Frostmourn1800spp.png" width="400px"></img>
-
 <img src="Light/gallery/J20-8000spp.png" width="400px"></img>
 
 <img src="Light/gallery/Lanterns-20000spp.png" width="400px"></img>
