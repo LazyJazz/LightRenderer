@@ -12,4 +12,4 @@ Suggest Build Environment: Visual Studio 2019 with Windows 10 SDK
 
 <img src="Light/gallery/WaterSmooth-14000spp.png" width="400px"></img>
 
-<img src="Light/gallery/lucy-darker-7200spp.png" width="400px"></img>
+<img src="Light/gallery/lucy-darker-7200spp.png" width="800px"></img>
